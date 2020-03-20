@@ -21,6 +21,14 @@ module Api
 				end
 			end
 
+			def destroy
+				coin = Coin.find(params[:id])
+				coin.destroy
+
+					render json: {status: 'Success!', message: 'Deleted Coin', data:coin},status: :ok
+			end
+
+
 			private
 
 			def coin_params
