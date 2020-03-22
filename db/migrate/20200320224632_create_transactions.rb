@@ -1,8 +1,9 @@
 class CreateTransactions < ActiveRecord::Migration[6.0]
   def change
     create_table :transactions do |t|
-      t.string :coin
-      t.string :created_by
+      t.string :name
+      t.integer :value
+      t.integer :coin_id
 
       t.timestamps
     end
