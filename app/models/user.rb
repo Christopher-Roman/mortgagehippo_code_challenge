@@ -2,7 +2,7 @@ class User < ApplicationRecord
 	validates :username, presence: true
 	validates :email, presence: true
 
-	has_many :transaction
+	has_many :owner, foreign_key: "user_id", class_name: "Transaction"
 	has_many :coin
 
 	before_create do |user|
