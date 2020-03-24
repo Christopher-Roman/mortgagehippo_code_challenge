@@ -3,7 +3,8 @@ class CreateTransactions < ActiveRecord::Migration[6.0]
     create_table :transactions do |t|
       t.string :name
       t.integer :value
-      t.integer :coin_id
+      t.string :api_key
+      t.string :transaction_type
 
       t.timestamps
     end

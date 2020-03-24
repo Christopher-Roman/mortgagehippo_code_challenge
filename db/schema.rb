@@ -10,28 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_22_224221) do
+ActiveRecord::Schema.define(version: 2020_03_20_224632) do
 
   create_table "coins", force: :cascade do |t|
     t.string "name"
     t.integer "value"
+    t.string "api_key"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "transactions", force: :cascade do |t|
     t.string "name"
-    t.string "value"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.string "coin_id"
-  end
-
-  create_table "users", force: :cascade do |t|
-    t.string "username"
+    t.integer "value"
     t.string "api_key"
-    t.boolean "admin"
-    t.string "email"
+    t.string "transaction_type"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

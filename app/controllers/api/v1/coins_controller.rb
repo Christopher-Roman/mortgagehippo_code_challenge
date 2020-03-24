@@ -18,14 +18,22 @@ module Api
 			# Post/Deposit Route for Coins
 
 			def create
-				coin = Coin.new(coin_params)
-				if coin.save
-					transaction = Transaction.new(name: coin.name, value: coin.value, coin_id: coin.id)
-					if transaction.save
-						render json: {status: 'Success!', message: 'Saved Coins', data:coin},status: :ok
+				if (params[:query] == "food" || params[:query] == "bills" || params[:query] == "fun" || params[:query] == "savings")
+					coin = Coin.new(coin_params)
+					coin[:api_key] = params[:query]
+					if coin.save
+						transaction = Transaction.new(transaction_params)
+						transaction[:api_key] = params[:query]
+						if transaction.save
+							render json: {status: 'Success!', message: 'Saved Coins', data:coin},status: :ok
+						else
+							render json: {status: 'Error!', message: 'Transaction Not Saved', data:transaction.errors},status: :unprocessable_entity
+						end
 					else
 						render json: {status: 'Error!', message: 'Coin Not Saved', data:coin.errors},status: :unprocessable_entity
 					end
+				else
+					render json: {status: 'Error!', message: 'Incorrect API Key', data:coin.errors},status: :unprocessable_entity
 				end
 			end
 
@@ -33,10 +41,17 @@ module Api
 
 			def destroy
 				coin = Coin.find(params[:id])
-				transaction = Transaction.new(name: coin.name, value:coin.value)
-				coin.destroy
-
-					render json: {status: 'Success!', message: 'Deleted Coin', data:coin},status: :ok
+				if coin.save
+					transaction = Transaction.new(name: coin.name, value:coin.value, api_key: coin.api_key, transaction_type: "Withdrawal")
+					if transaction.save
+						coin.destroy
+						render json: {status: 'Success!', message: 'Deleted Coin', data:coin},status: :ok
+					else
+						render json: {status: 'Error!', message: 'Transaction Not Saved', data:transaction.errors},status: :unprocessable_entity
+					end
+				else
+					render json: {status: 'Error!', message: 'Something went wrong.', data:coin.errors},status: :unprocessable_entity	
+				end
 			end
 
 			# Put Route for Coins
@@ -51,37 +66,18 @@ module Api
 
 			end
 
-			class TransactionsController < ApplicationController
-
-				# Get Route for all Transactions
-				def index
-					transactions = Transaction.all
-					render json: {status: 'Success!', message: 'Loaded Transactions', data:transactions},status: :ok
-				end
-
-				def create
-					transaction = Transaction.new(transaction_params)
-					if transaction.save
-						render json: {status: 'Success!', message: 'Saved Transaction', data:transaction},status: :ok
-					else
-						render json: {status: 'Error!', message: 'Transaction Not Saved', data:transaction.errors},status: :unprocessable_entity
-					end
-				end
-				# transaction object keys to verify before creating/editing coins
-
-				def transaction_params
-					params.permit(:name, :value, :coin_id)
-				end
-
-		end
-
 
 			private
+			# transaction object keys to verify before creating/editing coins
+
+			def transaction_params
+				params.permit(:name, :value, :api_key, :transaction_type)
+			end
 
 			# Coin object keys to verify before creating/editing coins
 
 			def coin_params
-				params.permit(:name, :value)
+				params.permit(:name, :value, :api_key)
 			end
 		end
 	end

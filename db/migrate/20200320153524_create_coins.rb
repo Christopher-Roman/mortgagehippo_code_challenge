@@ -3,6 +3,7 @@ class CreateCoins < ActiveRecord::Migration[6.0]
     create_table :coins do |t|
       t.string :name
       t.integer :value
+      t.string :api_key
 
       t.timestamps
     end

@@ -1,18 +1,15 @@
 Rails.application.routes.draw do
 
-  namespace 'api' do
 
-  	namespace 'v1' do
+	namespace 'api' do
 
-  		resources :users, only: [:create, :destroy]
+  		namespace 'v1' do
 
-		resources :coins, only: [:index, :show, :create, :update, :destroy]
+			post 'coins/:query' => 'coins#create'
+			
+			resources :coins, only: [:index, :show, :create, :update, :destroy]
 
-		resources :transactions, only: [:index, :show, :create]
-
-
-  	end
-
-  end
-
+			resources :transactions, only: [:index, :show, :create]
+  		end
+	end
 end
