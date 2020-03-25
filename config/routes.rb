@@ -4,13 +4,15 @@ Rails.application.routes.draw do
 	namespace 'api' do
 
   		namespace 'v1' do
-
+  			#Coin Routes
 			post 'coins/:query' => 'coins#create'
-			get 'transactions/:query' => 'transactions#index'
-			get 'coins/new' => 'coins#new'
-			get 'coins/edit/:id' => 'coins#update'
 			get 'value' => 'coins#value'
 
+			# Transaction custom Route
+			get 'transactions/:query' => 'transactions#index'
+
+
+			resources :admins, only: [:create, :index]
 			
 			resources :coins
 

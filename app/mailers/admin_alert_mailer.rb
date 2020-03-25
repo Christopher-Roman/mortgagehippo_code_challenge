@@ -5,9 +5,14 @@ class AdminAlertMailer < ApplicationMailer
   #
   #   en.admin_alert_mailer.coins_low.subject
   #
-  def coins_low(coin)
-    @coin = coin
+  def coins_low(coin, value)
+  	@coin = coin
+    @value = value
 
-    mail to: "tophy912@gmail.com"
+    @recipients = Admin.all()
+    if @recipients
+	    emails = @recipients.collect(&:email)
+	    mail to: emails, subject: "Coin Inventory Alert"
+	end
   end
 end

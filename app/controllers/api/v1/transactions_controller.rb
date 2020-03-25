@@ -8,10 +8,10 @@ module Api
 			def index
 				if params[:query]
 					transactions = Transaction.where(api_key: params[:query])
-					render 'index'
+					render json: {status: 'Success!', data:transactions},status: :ok
 				else
-					transactions = Transaction.order('created_at DESC')
-					render 'index'
+					transactions = Transaction.all()
+					render json: {status: 'Success!', data:transactions},status: :ok
 				end
 			end
 

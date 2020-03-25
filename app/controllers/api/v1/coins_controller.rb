@@ -22,9 +22,10 @@ module Api
 			# Post/Deposit Route for Coins
 
 			def create
-				if (params[:query] == "food" || params[:query] == "bills" || params[:query] == "fun" || params[:query] == "savings")
+				if api_check(params[:query])
 					coin = Coin.new(coin_params)
-					if(coin[:name] == "Adamentium Coin" || coin[:name] == "Carbonite Coin" || coin[:name] == "Amazonium Coin" || coin[:name] == "Vibranium Coin")
+					coin[:name].downcase!
+					if coin_name_check(coin[:name])
 						coin[:api_key] = params[:query]
 						if coin.save
 							transaction = Transaction.new(transaction_params)
@@ -35,13 +36,13 @@ module Api
 								render json: {status: 'Error!', message: 'Transaction Not Saved', data:transaction.errors},status: :unprocessable_entity
 							end
 						else
-							render json: {status: 'Error!', message: 'Coin Not Saved', data:coin.errors},status: :unprocessable_entity
+							render json: {status: 'Error!', message: 'Coin Not Saved. ', data:coin.errors},status: :unprocessable_entity
 						end
 					else
-						render json: {status: 'Error!', message: 'Must be one of the following coin names: Adamentium Coin, Carbonite Coin, Amazonium Coin, or Vibranium Coin'},status: :unprocessable_entity
+						render json: {status: 'Error!', message: 'The only accepted coins are: Adamentium Coin, Carbonite Coin, Amazonium Coin, or Vibranium Coin'},status: :unprocessable_entity
 					end
 				else
-					render json: {status: 'Error!', message: 'Incorrect API Key', data:coin.errors},status: :unprocessable_entity
+					render json: {status: 'Error!', message: 'Your API-Key was not accepted. Please use one of the following: Aa11, Bb22, Cc33, or Dd44'},status: :unprocessable_entity
 				end
 			end
 
@@ -59,7 +60,7 @@ module Api
 							render json: {status: 'Success!', message: 'Deleted Coin', data:@check},status: :ok
 						end
 					else
-						render json: {status: 'Error!', message: 'Transaction Not Saved', data:transaction.errors},status: :unprocessable_entity
+						render json: {status: 'Error!', message: 'Transaction Not Saved. Ensure coin creation JSON object includes transaction_type.', data:transaction.errors},status: :unprocessable_entity
 					end
 				else
 					render json: {status: 'Error!', message: 'Something went wrong.', data:coin.errors},status: :unprocessable_entity	
@@ -85,22 +86,33 @@ module Api
 
 
 			def inventory_check
-				adamentium = Coin.where("name = 'Adamentium Coin'").count
-				carbonite = Coin.where("name = 'Carbonite Coin'").count
-				amazonium = Coin.where("name = 'Amazonium Coin'").count
-				vibranium = Coin.where("name = 'Vibranium Coin'").count
+				adamentium = Coin.where("name = 'adamentium coin'").count
+				carbonite = Coin.where("name = 'carbonite coin'").count
+				amazonium = Coin.where("name = 'amazonium coin'").count
+				vibranium = Coin.where("name = 'vibranium coin'").count
 
 				all_coins = [adamentium, carbonite, amazonium, vibranium]
 
 				all_coins.each do |coins|
 					if coins < 4
-						#email function goes here
-						return "Inventory low, email sent."
+						total_value = value
+						AdminAlertMailer.coins_low(coins, total_value).deliver
 					end
 				end
 			end
 
 			private
+
+			def api_check(str)
+				accepted_keys = ["Aa11", "Bb22", "Cc33", "Dd44"]
+				accepted_keys.include?(str)
+			end
+
+			def coin_name_check(str)
+				accepted_names = ["adamentium coin", "carbonite coin", "amazonium coin", "vibranium coin"]
+				accepted_names.include?(str)
+			end
+
 
 			# transaction object keys to verify before creating/editing coins
 
