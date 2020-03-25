@@ -12,7 +12,11 @@ module Api
 
 			def show
 				coin = Coin.find(params[:id])
-				render json: {status: 'Success!', message: 'Loaded Coin', data:coin},status: :ok
+				render json: {status: 'Success!', message: 'Loaded Coin', data:coin.render_to_string('index.html')},status: :ok
+			end
+
+			def new
+				render file: Rails.root.join('public', 'new')
 			end
 
 			# Post/Deposit Route for Coins
@@ -64,6 +68,11 @@ module Api
 					render json: {status: 'Error!', message: 'Coin Not Updated', data:coin.errors},status: :unprocessable_entity
 				end
 
+			end
+
+			def value
+				coins = Coin.sum('value')
+				render json: {status: 'Success!', message: 'Total has been calculated', data:coin},status: :ok
 			end
 
 

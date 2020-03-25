@@ -6,8 +6,14 @@ module Api
 
 			# Get Route for all Transactions
 			def index
-				transactions = Transaction.order('created_at DESC')
-				render json: {status: 'Success!', message: 'Loaded All Transactions', data:transactions},status: :ok
+				if params[:query]
+					transactions = Transaction.where(api_key: params[:query])
+					render 'index'
+				else
+					transactions = Transaction.order('created_at DESC')
+					render 'index'
+				end
+
 			end
 
 		end
