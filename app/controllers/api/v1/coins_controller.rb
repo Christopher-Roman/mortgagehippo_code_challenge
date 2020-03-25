@@ -81,22 +81,26 @@ module Api
 
 			def value
 				coins = Coin.sum('value')
-				render json: {status: 'Success!', message: 'Total has been calculated', data:coin},status: :ok
 			end
 
 
 			def inventory_check
-				adamentium = Coin.where("name = 'adamentium coin'").count
-				carbonite = Coin.where("name = 'carbonite coin'").count
-				amazonium = Coin.where("name = 'amazonium coin'").count
-				vibranium = Coin.where("name = 'vibranium coin'").count
+				adamentium = Coin.where("name = 'adamentium coin'")
+				carbonite = Coin.where("name = 'carbonite coin'")
+				amazonium = Coin.where("name = 'amazonium coin'")
+				vibranium = Coin.where("name = 'vibranium coin'")
 
-				all_coins = [adamentium, carbonite, amazonium, vibranium]
+				all_coins = [
+							{type: "Adamentium Coins", number: adamentium.count}, 
+							{type: "Carbonite Coins", number: carbonite.count},
+							{type: "Amazonium Coins", number: amazonium.count},
+							{type: "Vibranium Coins", number: vibranium.count}
+							]
 
-				all_coins.each do |coins|
-					if coins < 4
+				all_coins.each do |coin|
+					if coin[:number] < 4
 						total_value = value
-						AdminAlertMailer.coins_low(coins, total_value).deliver
+						AdminAlertMailer.coins_low(coin, total_value).deliver
 					end
 				end
 			end

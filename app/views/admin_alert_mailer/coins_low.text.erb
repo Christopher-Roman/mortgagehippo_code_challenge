@@ -6,7 +6,7 @@ The API has generated this email because we are running low on coins.
 
 Current Low Inventory:
 
-<%= @coin.name %> <%=  %>
-Carbonite Coins <%= @carbonite %>
-Amazonium Coins <%= @amazonium %>
-Vibranium Coins <%= @vibranium %>
+Coin Name: <%= @coin[:type] %> 
+Number in Inventory: <%= @coin[:number] %>
+
+The total value of all coins in the system is <%= @value %>
