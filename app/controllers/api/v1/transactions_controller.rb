@@ -13,7 +13,6 @@ module Api
 					transactions = Transaction.order('created_at DESC')
 					render 'index'
 				end
-
 			end
 
 		end
