@@ -15,10 +15,6 @@ module Api
 				render json: {status: 'Success!', message: 'Loaded Coin', data:coin.render_to_string('index.html')},status: :ok
 			end
 
-			def new
-				render file: Rails.root.join('public', 'new')
-			end
-
 			# Post/Deposit Route for Coins
 
 			def create
